@@ -1,0 +1,193 @@
+<#escape x as (x)!> 
+<#assign base=request.contextPath />
+<html>
+	<head>
+		<base id="base" href="${base}">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>菜单管理</title>
+		<link href="${base}/static/css/style.css" rel="stylesheet" type="text/css">
+		<link href="${base}/static/css/select.css" rel="stylesheet" type="text/css" />
+		<link href="${base}/static/lib/editor/themes/default/default.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="${base}/static/js/jquery-1.8.2.js"></script>
+		<script type="text/javascript" src="${base}/static/js/pager.js"></script>
+		<script type="text/javascript" src="${base}/static/js/jquery.idTabs.min.js"></script>
+		<script type="text/javascript" src="${base}/static/js/select-ui.min.js"></script> 
+		<script type="text/javascript" src="${base}/static/lib/layer/layer.js"></script>
+		<script type="text/javascript" src="${base}/static/lib/editor/kindeditor.js"></script>
+		<script charset="utf-8" src="${base}/static/lib/editor/lang/zh_CN.js"></script>
+		<script language="javascript" type="text/javascript">
+			$(document).ready(function(e) {
+			    $(".select1").uedSelect({
+					width : 200			  
+				});
+			    
+			    /* $("#type").change(function(){
+					if($(this).val()==2){
+						$("#crud").show();
+					}else {
+						$("#crud").hide();
+					}
+			    }); */
+			    
+			    
+			    $("#selectParentId").click(function(){
+			    	//iframe层-父子操作
+			    	layer.open({
+			    		title:"选择父节点",
+			    	    type: 2,
+			    	    area: ['700px', '530px'],
+			    	    fix: false, //不固定
+			    	    maxmin: true,
+			    	    content: '${base}/admin/resources/tree.do'
+			    	});
+			    });
+			    
+			    
+			});
+			
+			
+			KindEditor.ready(function(K) { //上传图标
+				
+				var uploadbutton = K.uploadbutton({
+					button : K('#uploadButton')[0],
+					fieldName : 'files',
+					url : '${base}/upload.do?width=0&height=0',
+					afterUpload : function(data) {
+						console.log(data);
+						if (data.error === 0) {
+							var url = K.formatUrl(data.url, 'absolute');
+							K('#icon').val(url);
+						} else {
+							alert(data.message);
+						}
+					},
+					afterError : function(str) {
+						alert('图标上传失败 ！  ' + str);
+					}
+				});
+				uploadbutton.fileBox.change(function(e) {
+					uploadbutton.submit();
+				});
+			});
+			
+			function sub() {
+				var inputs = $(":input[required='required']");
+				// 不需要校验，直接提交
+				if(inputs==null || inputs.length==0){
+					$("#resourcesform").submit(); 
+					return;
+				}
+				// 需要校验
+				var pass = true;
+				inputs.each(function(){
+					if($(this).val()==""){
+						alert($(this).attr("message"));
+						$(this).focus();
+						pass = false;
+						return false;
+					}
+				});
+				if(pass){
+					$("#resourcesform").submit();
+				}
+				
+			}
+
+			function goBack() {
+				/* var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+				parent.layer.close(index); */
+				window.history.back();
+			}
+
+			/* function banks(resources_name){
+				layer.open({
+			        type: 2,
+			        title: resources_name+'的银行卡',
+			        maxmin: true,
+			        shadeClose: true, //点击遮罩关闭层
+			        area : ['1200px' , '800'],
+			        content: 'resourcesbank!index.htm?resources_name='+resources_name
+			    });
+			} */
+		</script>
+	</head>
+<body>
+<body>
+
+	<form id="backFrm" action="resources!index.htm" method="post">
+		<#if queryParams??>
+			<#list queryParams?keys as key>
+				<input type="hidden" name="${key}" value="${queryParams[key]}"/>
+			</#list>
+		</#if>
+	</form>
+
+	<div class="place">
+		    <span>位置：</span>
+		    <ul class="placeul">
+		    <li><a href="resources!index.htm">菜单管理</a></li>
+		    <li><a href="#"><#if resources??>编辑菜单<#else>添加菜单</#if></a></li>
+		    </ul>
+		</div>
+		  
+		 <div class="formbody">
+		    
+		    <div class="formtitle"><span><#if resources??>编辑菜单<#else>添加菜单</#if></span></div>
+		    <form action="${base}/admin/resources/add.do" name="resourcesform" id="resourcesform" method="post">
+        		<input type="hidden" name="id" id="id" value="${resources.id}"/>
+		    <ul class="forminfo">
+		    
+		     <li><label>菜单名:<b>*</b></label><input id="name" name="name" type="text" class="dfinput" value="${resources.name}" required="required" message="请填写菜单名"/></li>
+		     <li><label>父菜单:<b>*</b></label><input id="parentName" name="parentName" type="text" readonly="readonly" class="dfinput" value="${resources.parentName}" required="required" message="请选择父菜单" />
+		     	<input id="parentId" name="parentId" type="hidden" class="dfinput" value="${resources.parentId}" />
+		     	<a href="javascript:void(0);" id="selectParentId" style="color: blue;">选择</a>
+		     </li>
+		     <li><label>权限KEY:<b>*</b></label><input id="resKey" name="resKey" type="text" class="dfinput" value="${resources.resKey}" required="required" message="请选择权限KEY"/>
+		     <li><label>菜单访问地址:</label><input id="resUrl" name="resUrl" type="text" class="dfinput" value="${resources.resUrl}" />
+		     <input id="type" name="type" type="hidden" class="dfinput" value="1" />
+		    <li><label>菜单状态:</label>
+		     	<div class="vocation">
+				   <select name="status" id="status" class="select1">
+				    	<option value=1 <#if (resources.status)?? && resources.status==1>selected="selected"</#if>>启用</option>
+				    	<option value=0 <#if (resources.status)?? && resources.status==0>selected="selected"</#if>>禁用</option>
+				    </select>
+				</div>
+		     </li>
+		     
+		     <li id="crud"><label>功能按钮:</label>
+		     	<div
+			     	style="height:32px;
+			     	line-height:32px;  
+			     	width:333px;
+			     	border-top: solid 1px #a7b5bc;
+					border-left: solid 1px #a7b5bc;
+					border-right: solid 1px #ced9df;
+					border-bottom: solid 1px #ced9df;
+					float: left;
+					margin-bottom: 10px;
+					padding-left: 10px;
+					">
+					<input type="checkbox" name="curd[]" value="list">查询
+				   	<input type="checkbox" name="curd[]" value="add">添加
+				    <input type="checkbox" name="curd[]" value="update">修改
+				    <input type="checkbox" name="curd[]" value="delete">删除
+				    <input type="checkbox" name="curd[]" value="audit">审核
+				</div>
+		     </li>
+		     
+		     <li><label>描叙:</label><input id="description" name="description" type="text" class="dfinput" value="${resources.description}" /></li>
+		     <li><label>icon:</label>
+		     	<input id="icon" name="icon" type="text" class="dfinput" value="${resources.icon}" />
+		     	<input type="button" id="uploadButton" value="选择" />
+		     </li>
+		    <li><label>&nbsp;</label>
+		   		 <input type="button" class="btn" onclick="sub();" value="完成">
+		   		<input type="button" class="btn" onclick="goBack();"  value="取消">
+			</li>
+		    </ul>
+		    
+		    </form>
+		</div>
+</body>
+</html>
+</#escape>

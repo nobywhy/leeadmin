@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lee.admin.dao.SysResourcesUserDao">
+
+
+	<insert id="create" parameterType="java.util.HashMap">
+		insert into
+		sys_res_user(resId,userId)
+		values
+		(#{resId},#{userId})
+	</insert>
+
+	<update id="update" parameterType="java.util.HashMap">
+		update sys_res_user
+		<set>
+			<if test="resId!=null &amp;&amp; resId!=''">
+				resId=#{resId}
+			</if>
+		</set>
+		where userId=#{userId}
+	</update>
+
+	<delete id="delete" parameterType="int">
+		delete from sys_res_user where
+		userId=#{userId}
+	</delete>
+	
+	<delete id="deleteByResId" parameterType="int">
+		delete from sys_res_user where
+		resId=#{resId}
+	</delete>
+
+	<select id="getById" resultType="java.util.HashMap">
+		select * from sys_res_user where
+		userId=#{userId}
+	</select>
+
+	<select id="getByConditionCount" parameterType="java.util.HashMap"
+		resultType="int">
+		select count(*) from sys_res_user
+		<where>
+			<if test="userId!=null &amp;&amp; userId!=''">
+				and userId=#{userId}
+			</if>
+		</where>
+	</select>
+
+	<select id="getByConditionPage" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from sys_res_user
+		<where>
+			<if test="userId!=null &amp;&amp; userId!=''">
+				and userId=#{userId}
+			</if>
+		</where>
+		limit #{first},#{pageSize}
+	</select>
+	
+	<select id="getByCondition" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from sys_res_user
+		<where>
+			<if test="userId!=null &amp;&amp; userId!=''">
+				and userId=#{userId}
+			</if>
+		</where>
+	</select>
+
+
+	<select id="getUserResources" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.* from sys_resources a ,sys_res_user b
+		where a.id = b.resId
+		and b.userId = #{userId}
+		<if test="parentId!=null &amp;&amp; parentId!=''">
+				and a.parentId=#{parentId}
+		</if>
+	</select>
+
+</mapper>

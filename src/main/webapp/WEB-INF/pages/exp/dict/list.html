@@ -1,0 +1,198 @@
+<#escape x as (x)!> 
+<#assign base=request.contextPath />
+<html>
+	<head>
+		<base id="base" href="${base}">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>数据字典管理</title>
+		<link href="${base}/static/css/style.css" rel="stylesheet" type="text/css">
+		<link href="${base}/static/css/select.css" rel="stylesheet" type="text/css" />
+		<link href="${base}/static/lib/laydate/need/laydate.css" rel="stylesheet" type="text/css" />
+		
+		<script type="text/javascript" src="${base}/static/js/jquery-1.8.2.js"></script>
+		<script type="text/javascript" src="${base}/static/js/pager.js"></script>
+		<script type="text/javascript" src="${base}/static/js/jquery.idTabs.min.js"></script>
+		<script type="text/javascript" src="${base}/static/js/select-ui.min.js"></script> 
+		<script type="text/javascript" src="${base}/static/lib/layer/layer.js"></script>
+		<script type="text/javascript" src="${base}/static/lib/laydate/laydate.js"></script>
+		<script language="javascript" type="text/javascript">
+			
+		    var pageStr = createPageBar(${page.pageNumber},${page.pageSize},${page.pageIndex},${page.total}, "javascript:dosearch" ,10);
+			function dosearch(p1, p2) {
+				var frm = document.searchfrm;
+				frm.pageIndex.value = p1;
+				frm.pageSize.value = p2;
+				frm.submit();
+			}
+			
+			function querydict(id,parent_id){
+		   		$("#searchfrm").attr("action","${base}/exp/dict/toAdd.do?id="+id+"&parent_id="+parent_id);
+		   		$("#searchfrm").submit();
+		    }
+			
+			//单条记录删除  
+		   function deletedict(id,parent_id){
+		   		var url = "${base}/exp/dict/delete.do";
+		   		if(id==""){
+		   			alert("删除记录删除的ID获取失败！");
+		   			return false;
+		   		}
+				if(!confirm("确定是否要删除？")){
+					return false;
+				}
+				var para = "id=" + id+"&parent_id="+parent_id;
+	            $.ajax({
+	            	type:"GET",
+	            	url:url,
+	            	data:para,
+	            	dataType:"json",
+	            	success:function(msg){
+	            		if(msg.code == "1000"){
+		            		window.location.reload()
+	            		}else {
+	            			alert("操作失败");
+	            		}
+	            	},
+	            	error:function(msg){
+	            		alert("操作失败");
+	            	}
+	            });
+			}
+			
+		</script>
+		<script type="text/javascript">
+		$(document).ready(function(e) {
+		    $(".select1").uedSelect({
+				width : 200			  
+			});
+		    
+		    
+		    var start = {
+				    elem: '#startTime',
+				    format: 'YYYY-MM-DD hh:mm:ss',
+				    max: '2099-06-16 23:59:59', //最大日期
+				    istime: true,
+				    istoday: false,
+				    choose: function(datas){
+				         end.min = datas; //开始日选好后，重置结束日的最小日期
+				         end.start = datas //将结束日的初始值设定为开始日
+				    }
+				};
+				var end = {
+				    elem: '#endTime',
+				    format: 'YYYY-MM-DD hh:mm:ss',
+				    max: '2099-06-16 23:59:59',
+				    istime: true,
+				    istoday: false,
+				    choose: function(datas){
+				        start.max = datas; //结束日选好后，重置开始日的最大日期
+				    }
+				};
+				//laydate(start);
+				//laydate(end);
+		    
+		});
+		
+		</script>
+	</head>
+<body>
+<div class="place">
+		    <span>位置：</span>
+		    <ul class="placeul">
+		    <li><a href="${base}/exp/dict/list.do">数据字典管理</a></li>
+		     <li><a href="${base}/exp/dict/list.do?parent_id=${parentDict.id}">${parentDict.description}</a></li>
+		    
+		    </ul>
+   	 </div>
+	<br>
+	<div style="margin-left:5px;">
+	 <form name="searchfrm" id="searchfrm" action="${base}/exp/dict/list.do" method="post">
+		  <div class="searchbar_mid">
+		  <input type="hidden" name="pageIndex" value="${page.pageIndex}">
+     			<input type="hidden" name="pageSize" value="${page.pageSize}">
+     			<!-- <ul class="seachform">
+				    <li><label>KEY</label><input value="${queryParams.dict_key!''}" name="dict_key" id="dict_key" type="text" class="scinput" /></li>
+				    <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="查询"/></li>
+				</ul>  -->
+			
+	      </div>
+       </form>
+      <br/> 
+    </div>
+    
+    
+    <@hasPermission name="user_add">
+	<div class="rightinfo">
+		<div class="tools">
+	    	 <ul class="toolbar">
+		        <li class="click"><a href="${base}/exp/dict/toAdd.do?parent_id=${(parentDict.id)!0}"><span><img src="${base}/static/images/t01.png" /></span>添加</a></li>
+	         </ul>
+    	</div>
+    </div>
+    </@hasPermission> 
+    
+	<table class="tablelist">
+    	<thead>
+    	<tr>
+    	
+    	<th width="5%">上级名称</th>
+		<th width="5%">键</th>
+		<th width="5%">值</th>
+		<th width="5%">描叙</th>
+		<th width="5%">排序</th>
+		<th width="5%">备注</th>
+		<th width="5%">创建时间</th>
+
+    	
+        <th width="5%">操作</th>
+        </tr>
+        </thead>
+        
+        <#if page??>
+	      <#list page.elements as dict>
+        <tbody>
+         <tr>
+         
+         	<td>${parentDict.description}</td>
+			<td><a href="${base}/exp/dict/list.do?parent_id=${dict.id}" style="color: blue;">${dict.dict_key}</a></td>
+			<td><a href="${base}/exp/dict/list.do?parent_id=${dict.id}" style="color: blue;">${dict.dict_value}</a></td>
+			<td>${dict.description}</td>
+			<td>${dict.sort}</td>
+			<td>${dict.remarks}</td>
+			<td>${dict.create_time}</td>
+
+         	
+            <td>
+              <!--
+              <@hasPermission name="dict_audit">
+              	<a href="javascript:audit('${dict.id}','${dict.accountName}');" onclick="">审核</a> |  
+              </@hasPermission> 
+              -->
+              
+              <@hasPermission name="dict_update">
+	          	<a href="javascript:querydict(${dict.id},${dict.parent_id});" onclick="">编辑</a> |  
+	          </@hasPermission> 
+	          
+	          <@hasPermission name="dict_delete">
+			  	<a href="javascript:deletedict(${dict.id},${dict.parent_id})">删除</a>
+			  </@hasPermission> 
+	         </td> 
+         </tr>
+        </tbody>
+        </#list>
+	  	</#if>
+    </table>
+    </div>
+	
+	<script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+	
+	<div class="pagin">
+	    <script language="javascript">
+			document.write(pageStr);
+		</script>
+	</div>
+	</body>
+</html>
+</#escape>

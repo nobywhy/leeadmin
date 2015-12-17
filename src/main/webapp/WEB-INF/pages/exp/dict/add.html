@@ -1,0 +1,134 @@
+<#escape x as (x)!> 
+<#assign base=request.contextPath />
+<html>
+	<head>
+		<base id="base" href="${base}">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>数据字典管理</title>
+		<link href="${base}/static/css/style.css" rel="stylesheet" type="text/css">
+		<link href="${base}/static/css/select.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="${base}/static/js/jquery-1.8.2.js"></script>
+		<script type="text/javascript" src="${base}/static/js/pager.js"></script>
+		<script type="text/javascript" src="${base}/static/js/jquery.idTabs.min.js"></script>
+		<script type="text/javascript" src="${base}/static/js/select-ui.min.js"></script> 
+		<script type="text/javascript" src="${base}/static/lib/layer/layer.js"></script>
+		<script language="javascript" type="text/javascript">
+			$(document).ready(function(e) {
+			    $(".select1").uedSelect({
+					width : 200			  
+				});
+			    
+			});
+			
+			
+			function sub(){
+				   /* var param = $("#dictform").serialize();
+				   $.ajax({
+				   		type: "POST",
+					   	url: "dict/add.html",
+					   	data: param,
+					   	dataType:"json",
+					   	success: function(msg){
+					   		alert(msg.message);
+					   	   //var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+					   	   //parent.layer.close(index);
+					   	   window.parent.location.reload();
+					   	}
+					}); */
+					
+					
+					var inputs = $(":input[required='required']");
+					// 不需要校验，直接提交
+					//alert(inputs.length);
+					if(inputs==null || inputs.length==0){
+						$("#dictform").submit(); 
+						return;
+					}
+					// 需要校验
+					var pass = true;
+					inputs.each(function(){
+						if($(this).val()==""){
+							alert($(this).attr("message"));
+							$(this).focus();
+							pass = false;
+							return false;
+						}
+					});
+					if(pass){
+					   $("#dictform").submit(); 
+					}
+				}
+				 
+				function goBack(){
+					//var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+					//parent.layer.close(index);
+					$("#backFrm").submit();
+				}
+			
+			/* function banks(dict_name){
+				layer.open({
+			        type: 2,
+			        title: dict_name+'的银行卡',
+			        maxmin: true,
+			        shadeClose: true, //点击遮罩关闭层
+			        area : ['1200px' , '800'],
+			        content: 'dictbank!index.htm?dict_name='+dict_name
+			    });
+			} */
+		
+		</script>
+	</head>
+<body>
+<body>
+
+	<form id="backFrm" action="${base}/exp/dict/list.do" method="post">
+		<#if queryParams??>
+			<#list queryParams?keys as key>
+				<input type="hidden" name="${key}" value="${queryParams[key]}"/>
+			</#list>
+		</#if>
+	</form>
+
+	<div class="place">
+		    <span>位置：</span>
+		    <ul class="placeul">
+		    <li><a href="${base}/exp/dict/list.do>数据字典管理</a></li>
+		    <li><a href="#"><#if dict??>编辑数据字典<#else>添加数据字典</#if></a></li>
+		    </ul>
+		</div>
+		  
+		 <div class="formbody">
+		    
+		    <div class="formtitle"><span><#if dict??>编辑数据字典<#else>添加数据字典</#if></span></div>
+		    <form action="${base}/exp/dict/add.do" name="dictform" id="dictform"  method="post">
+        	<input type="hidden" name="id" id="id" value="${dict.id}"/>
+		    <ul class="forminfo">
+		    
+		     <li><label>键:<b>*</b></label><input id="dict_key" name="dict_key" type="text" class="dfinput" value="${dict.dict_key}" required="required" message="请填写键"/></li>
+
+			<li><label>值:<b>*</b></label><input id="dict_value" name="dict_value" type="text" class="dfinput" value="${dict.dict_value}"  required="required" message="请填写值"/></li>
+			
+			<li><label>名称/描叙:<b>*</b></label><input id="description" name="description" type="text" class="dfinput" value="${dict.description}"  required="required" message="请填写名称/描叙"/></li>
+			
+			<li><label>上级名称:</label>
+				<input id="parentName" name="parentName" type="text" class="dfinput" readonly="readonly" value="${(parentDict.description)!'根节点'}" /> 
+		     	<input id="parent_id" name="parent_id" type="hidden" class="dfinput" value="${(parentDict.id)!'0'}" />
+			</li>
+			
+			<li><label>排序:</label><input id="sort" name="sort" type="text" class="dfinput" value="${(dict.sort)!'0'}" /></li>
+			
+			<li><label>备注:</label><input id="remarks" name="remarks" type="text" class="dfinput" value="${dict.remarks}" /></li>
+
+
+		     
+		     <li><label>&nbsp;</label>
+		   		<input type="button" class="btn" onclick="sub();" value="提交">
+		   		<input type="button" class="btn" onclick="goBack();"  value="取消">
+			</li>
+		    </ul>
+		    
+		    </form>
+		</div>
+</body>
+</html>
+</#escape>

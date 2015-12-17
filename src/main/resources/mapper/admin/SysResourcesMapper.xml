@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lee.admin.dao.SysResourcesDao">
+
+
+	<insert id="create" parameterType="java.util.HashMap">
+		insert into sys_resources
+		(parentId,name,resKey,type,resUrl,level,icon,status,description)
+		values
+		(#{parentId},#{name},#{resKey},#{type},#{resUrl},#{level},#{icon},#{status},#{description})
+	</insert>
+
+	<insert id="createReturnId" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_resources
+		(parentId,name,resKey,type,resUrl,level,icon,status,description)
+		values
+		(#{parentId},#{name},#{resKey},#{type},#{resUrl},#{level},#{icon},#{status},#{description})
+	</insert>
+
+	<update id="update" parameterType="java.util.HashMap">
+		update sys_resources
+		<set>
+			<if test="name!=null &amp;&amp; name!=''">
+				name=#{name},
+			</if>
+			<if test="parentId!=null &amp;&amp; parentId!=''">
+				parentId=#{parentId},
+			</if>
+			<if test="resKey!=null &amp;&amp; resKey!=''">
+				resKey=#{resKey},
+			</if>
+			<if test="type!=null &amp;&amp; type!=''">
+				type=#{type},
+			</if>
+			<if test="resUrl!=null &amp;&amp; resUrl!=''">
+				resUrl=#{resUrl},
+			</if>
+			<if test="level!=null &amp;&amp; level!=''">
+				level=#{level},
+			</if>
+			<if test="icon!=null &amp;&amp; icon!=''">
+				icon=#{icon},
+			</if>
+			<if test="status!=null &amp;&amp; status!=''">
+				status=#{status},
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				description=#{description},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<delete id="delete" parameterType="int">
+		delete from sys_resources where
+		id=#{id}
+	</delete>
+	<delete id="deleteByParentId" parameterType="int">
+		delete from sys_resources where
+		parentId=#{parentId}
+	</delete>
+
+	<select id="getById" resultType="java.util.HashMap">
+		select * from sys_resources where
+		id=#{id}
+	</select>
+
+	<select id="getByConditionCount" parameterType="java.util.HashMap"
+		resultType="int">
+		select count(*) from sys_resources
+		<where>
+			<if test="parentId!=null &amp;&amp; parentId!=''">
+				and parentId=#{parentId}
+			</if>
+			<if test="name!=null &amp;&amp; name!=''">
+				and name like CONCAT('%',#{name},'%')  
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				and description=#{description}
+			</if>
+			<if test="resKey!=null &amp;&amp; resKey!=''">
+				and resKey=#{resKey}
+			</if>
+			<if test="type!=null &amp;&amp; type!=''">
+				and type=#{type}
+			</if>
+			<if test="status!=null &amp;&amp; status!=''">
+				and status=#{status}
+			</if>
+		</where>
+	</select>
+
+	<select id="getByConditionPage" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from sys_resources
+		<where>
+			<if test="parentId!=null &amp;&amp; parentId!=''">
+				and parentId=#{parentId}
+			</if>
+			<if test="name!=null &amp;&amp; name!=''">
+				and name like CONCAT('%',#{name},'%')  
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				and description=#{description}
+			</if>
+			<if test="resKey!=null &amp;&amp; resKey!=''">
+				and resKey=#{resKey}
+			</if>
+			<if test="type!=null &amp;&amp; type!=''">
+				and type=#{type}
+			</if>
+			<if test="status!=null &amp;&amp; status!=''">
+				and status=#{status}
+			</if>
+		</where>
+		order by id desc
+		limit #{first},#{pageSize}
+	</select>
+	
+	<select id="getByCondition" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from sys_resources
+		<where>
+			<if test="parentId!=null &amp;&amp; parentId!=''">
+				and parentId=#{parentId}
+			</if>
+			<if test="name!=null &amp;&amp; name!=''">
+				and name like CONCAT('%',#{name},'%')  
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				and description=#{description}
+			</if>
+			<if test="resKey!=null &amp;&amp; resKey!=''">
+				and resKey=#{resKey}
+			</if>
+			<if test="type!=null &amp;&amp; type!=''">
+				and type=#{type}
+			</if>
+			<if test="status!=null &amp;&amp; status!=''">
+				and status=#{status}
+			</if>
+		</where>
+	</select>
+	
+	<select id="tree" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select id,parentId as pId,name from sys_resources
+		<where>
+			<if test="status!=null &amp;&amp; status!=''">
+				and status=#{status}
+			</if>
+		</where>
+	</select>
+
+</mapper>

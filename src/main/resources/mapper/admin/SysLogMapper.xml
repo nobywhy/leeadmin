@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lee.admin.dao.SysLogDao">
+
+
+	<insert id="create" parameterType="java.util.HashMap">
+		insert into
+		sys_log(module,accountName,methods,actionTime,description,userIP,operTime)
+		values
+		(#{module},#{accountName},#{methods},#{actionTime},#{description},#{userIP},default)
+	</insert>
+
+	<update id="update" parameterType="java.util.HashMap">
+		update sys_log
+		<set>
+			<if test="module!=null &amp;&amp; module!=''">
+				module=#{module},
+			</if>
+			<if test="methods!=null &amp;&amp; methods!=''">
+				methods=#{methods},
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				description=#{description},
+			</if>
+			<if test="userIP!=null &amp;&amp; userIP!=''">
+				userIP=#{userIP}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<delete id="delete" parameterType="int">
+		delete from sys_log where
+		id=#{id}
+	</delete>
+
+	<select id="getById" resultType="java.util.HashMap">
+		select * from sys_log where
+		id=#{id}
+	</select>
+
+	<select id="getByConditionCount" parameterType="java.util.HashMap"
+		resultType="int">
+		select count(*) from sys_log
+		<where>
+			<if test="accountName!=null &amp;&amp; accountName!=''">
+				and accountName=#{accountName}
+			</if>
+			<if test="module!=null &amp;&amp; module!=''">
+				and module=#{module}
+			</if>
+			<if test="methods!=null &amp;&amp; methods!=''">
+				and methods=#{methods}
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				and description=#{description}
+			</if>
+			<if test="userIP!=null &amp;&amp; userIP!=''">
+				and userIP=#{userIP}
+			</if>
+			<if test="startTime!=null &amp;&amp; startTime!=''">
+				<![CDATA[ and operTime>= #{startTime}]]>
+			</if>
+			<if test="endTime!=null &amp;&amp; endTime!=''">
+				<![CDATA[ and operTime< #{endTime}]]>
+			</if>
+			
+			
+		</where>
+	</select>
+
+	<select id="getByConditionPage" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from sys_log
+		<where>
+			<if test="accountName!=null &amp;&amp; accountName!=''">
+				and accountName=#{accountName}
+			</if>
+			<if test="module!=null &amp;&amp; module!=''">
+				and module=#{module}
+			</if>
+			<if test="methods!=null &amp;&amp; methods!=''">
+				and methods=#{methods}
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				and description=#{description}
+			</if>
+			<if test="userIP!=null &amp;&amp; userIP!=''">
+				and userIP=#{userIP}
+			</if>
+			<if test="startTime!=null &amp;&amp; startTime!=''">
+				<![CDATA[ and operTime>= #{startTime}]]>
+			</if>
+			<if test="endTime!=null &amp;&amp; endTime!=''">
+				<![CDATA[ and operTime< #{endTime}]]>
+			</if>
+		</where>
+		order by id desc
+		limit #{first},#{pageSize}
+	</select>
+	
+	<select id="getByCondition" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from sys_log
+		<where>
+			<if test="accountName!=null &amp;&amp; accountName!=''">
+				and accountName=#{accountName}
+			</if>
+			<if test="module!=null &amp;&amp; module!=''">
+				and module=#{module}
+			</if>
+			<if test="methods!=null &amp;&amp; methods!=''">
+				and methods=#{methods}
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				and description=#{description}
+			</if>
+			<if test="userIP!=null &amp;&amp; userIP!=''">
+				and userIP=#{userIP}
+			</if>
+			<if test="startTime!=null &amp;&amp; startTime!=''">
+				<![CDATA[ and operTime>= #{startTime}]]>
+			</if>
+			<if test="endTime!=null &amp;&amp; endTime!=''">
+				<![CDATA[ and operTime< #{endTime}]]>
+			</if>
+		</where>
+		order by id desc
+	</select>
+
+</mapper>

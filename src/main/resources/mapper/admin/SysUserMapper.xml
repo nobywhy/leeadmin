@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lee.admin.dao.SysUserDao">
+
+
+	<insert id="create" parameterType="java.util.HashMap">
+		insert into
+		sys_user(userName,accountName,password,credentialsSalt,description,locked,createTime,deletestatus)
+		values
+		(#{userName},#{accountName},#{password},#{credentialsSalt},#{description},#{locked},default,#{deletestatus})
+	</insert>
+
+	<update id="update" parameterType="java.util.HashMap">
+		update sys_user
+		<set>
+			<if test="userName!=null &amp;&amp; userName!=''">
+				userName=#{userName},
+			</if>
+			<if test="password!=null &amp;&amp; password!=''">
+				password=#{password},
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				description=#{description},
+			</if>
+			<if test="locked!=null &amp;&amp; locked!=''">
+				locked=#{locked},
+			</if>
+			<if test="deletestatus!=null &amp;&amp; deletestatus!=''">
+				deletestatus=#{deletestatus}
+			</if>
+
+			<!-- <if test="customerid!=null &amp;&amp; customerid > 0"> and customerid=#{customerid} 
+				</if> -->
+		</set>
+		where id=#{id}
+	</update>
+
+	<delete id="delete" parameterType="int">
+		delete from sys_user where
+		id=#{id}
+	</delete>
+
+	<select id="getById" resultType="java.util.HashMap">
+		select * from sys_user where
+		id=#{id}
+	</select>
+
+	<select id="getByConditionCount" parameterType="java.util.HashMap"
+		resultType="int">
+		select count(*) from sys_user
+		<where>
+			<if test="accountName!=null &amp;&amp; accountName!=''">
+				and accountName=#{accountName}
+			</if>
+			<if test="userName!=null &amp;&amp; userName!=''">
+				and userName=#{userName}
+			</if>
+			<if test="password!=null &amp;&amp; password!=''">
+				and password=#{password}
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				and description=#{description}
+			</if>
+			<if test="locked!=null &amp;&amp; locked!=''">
+				and locked=#{locked}
+			</if>
+			<if test="deletestatus!=null &amp;&amp; deletestatus!=''">
+				and deletestatus=#{deletestatus}
+			</if>
+		</where>
+	</select>
+
+	<select id="getByConditionPage" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from sys_user
+		<where>
+			<if test="accountName!=null &amp;&amp; accountName!=''">
+				and accountName=#{accountName}
+			</if>
+			<if test="userName!=null &amp;&amp; userName!=''">
+				and userName=#{userName}
+			</if>
+			<if test="password!=null &amp;&amp; password!=''">
+				and password=#{password}
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				and description=#{description}
+			</if>
+			<if test="locked!=null &amp;&amp; locked!=''">
+				and locked=#{locked}
+			</if>
+			<if test="deletestatus!=null &amp;&amp; deletestatus!=''">
+				and deletestatus=#{deletestatus}
+			</if>
+		</where>
+		order by id desc
+		limit #{first},#{pageSize}
+	</select>
+	
+	<select id="getByCondition" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from sys_user
+		<where>
+			<if test="accountName!=null &amp;&amp; accountName!=''">
+				and accountName=#{accountName}
+			</if>
+			<if test="userName!=null &amp;&amp; userName!=''">
+				and userName=#{userName}
+			</if>
+			<if test="password!=null &amp;&amp; password!=''">
+				and password=#{password}
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				and description=#{description}
+			</if>
+			<if test="locked!=null &amp;&amp; locked!=''">
+				and locked=#{locked}
+			</if>
+			<if test="deletestatus!=null &amp;&amp; deletestatus!=''">
+				and deletestatus=#{deletestatus}
+			</if>
+		</where>
+		order by id desc
+	</select>
+
+</mapper>

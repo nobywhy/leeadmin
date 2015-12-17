@@ -1,0 +1,202 @@
+<#escape x as (x)!> 
+<#assign base=request.contextPath />
+<html>
+	<head>
+		<base id="base" href="${base}">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>用户管理</title>
+		<link href="${base}/static/css/style.css" rel="stylesheet" type="text/css">
+		<link href="${base}/static/css/select.css" rel="stylesheet" type="text/css" />
+		<link href="${base}/static/css/laydate/need/laydate.css" rel="stylesheet" type="text/css" />
+		
+		<script type="text/javascript" src="${base}/static/js/jquery-1.8.2.js"></script>
+		<script type="text/javascript" src="${base}/static/js/pager.js"></script>
+		<script type="text/javascript" src="${base}/static/js/jquery.idTabs.min.js"></script>
+		<script type="text/javascript" src="${base}/static/js/select-ui.min.js"></script> 
+		<script type="text/javascript" src="${base}/static/lib/layer/layer.js"></script>
+		<script type="text/javascript" src="${base}/static/lib/laydate/laydate.js"></script>
+		<script language="javascript" type="text/javascript">
+			
+		    var pageStr = createPageBar(${page.pageNumber},${page.pageSize},${page.pageIndex},${page.total}, "javascript:dosearch" ,10);
+			function dosearch(p1, p2) {
+				var frm = document.searchfrm;
+				frm.pageIndex.value = p1;
+				frm.pageSize.value = p2;
+				frm.submit();
+			}
+			
+			function querysyslog(id){
+		   		$("#searchfrm").attr("action","${base}/admin/syslog/toAdd.do?id="+id);
+		   		$("#searchfrm").submit();
+                 //window.location.href="bonus!setBonus.htm?id="+id;
+		    }
+			
+			//单条记录删除  
+		   function deletesyslog(id){
+		   		var url = "${base}/admin/syslog/delete.do";
+		   		if(id==""){
+		   			alert("删除记录删除的ID获取失败！");
+		   			return false;
+		   		}
+				if(!confirm("确定是否要删除？")){
+					return false;
+				}
+				var para = "id=" + id;
+	            $.ajax({
+	            	type:"GET",
+	            	url:url,
+	            	data:para,
+	            	dataType:"json",
+	            	success:function(msg){
+	            		if(msg == "1"){
+		            		window.location.reload()
+	            		}else {
+	            			alert("操作失败");
+	            		}
+	            	},
+	            	error:function(msg){
+	            		alert("操作失败");
+	            	}
+	            });
+			}
+			
+		</script>
+		<script type="text/javascript">
+		$(document).ready(function(e) {
+		    $(".select1").uedSelect({
+				width : 200			  
+			});
+		    
+		    
+		    var start = {
+				    elem: '#startTime',
+				    format: 'YYYY-MM-DD hh:mm:ss',
+				    max: '2099-06-16 23:59:59', //最大日期
+				    istime: true,
+				    istoday: false,
+				    choose: function(datas){
+				         end.min = datas; //开始日选好后，重置结束日的最小日期
+				         end.start = datas //将结束日的初始值设定为开始日
+				    }
+				};
+				var end = {
+				    elem: '#endTime',
+				    format: 'YYYY-MM-DD hh:mm:ss',
+				    max: '2099-06-16 23:59:59',
+				    istime: true,
+				    istoday: false,
+				    choose: function(datas){
+				        start.max = datas; //结束日选好后，重置开始日的最大日期
+				    }
+				};
+				laydate(start);
+				laydate(end);
+		    
+		});
+		
+		function authorize(uid,accountName){
+			/* layer.open({
+		        type: 2,
+		        title: '给'+uname+'授权',
+		        maxmin: true,
+		        shadeClose: true, //点击遮罩关闭层
+		        area : ['400' , '800'],
+		        content: '${base}/admin/syslog/tree.do?uid='+uid
+		    }); */
+		    //window.location.href='${base}/admin/syslog/authorize.do?uid='+uid
+		   	$("#accountName").val(accountName);
+		   	$("#searchfrm").attr("action",'${base}/admin/syslog/toAuthorize.do?uid='+uid);
+		   	$("#searchfrm").submit();
+		}
+		</script>
+	</head>
+<body>
+<div class="place">
+		    <span>位置：</span>
+		    <ul class="placeul">
+		    <li><a href="#">用户管理</a></li>
+		    </ul>
+   	 </div>
+	<br>
+	<div style="margin-left:5px;">
+	 <form name="searchfrm" id="searchfrm" action="${base}/admin/syslog/list.do" method="post">
+		  <div class="searchbar_mid">
+		  <input type="hidden" name="pageIndex" value="${page.pageIndex}">
+     			<input type="hidden" name="pageSize" value="${page.pageSize}">
+     			<ul class="seachform">
+				    
+				    <li><label>帐号</label><input value="${queryParams.accountName!''}" name="accountName" id="accountName" type="text" class="scinput" /></li>
+				    </li>
+				    <li><label>IP</label><input value="${queryParams.userIP!''}" name="userIP" id="userIP" type="text" class="scinput" /></li>
+				    </li>
+				    <li><label>操作时间</label>
+				    <input value="${queryParams.startTime!''}" name="startTime" id="startTime" type="text" class="scinput" />
+				          至<input value="${queryParams.endTime!''}" name="endTime" id="endTime" type="text" class="scinput" />
+				    </li>
+				    
+				    <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="查询"/></li>
+				</ul> 
+			
+	      </div>
+       </form>
+      <br/> 
+    </div>
+    
+	<table class="tablelist">
+    	<thead>
+    	<tr>
+    	
+    	<th width="5%">帐号</th>
+    	<th width="5%">模块</th>
+    	<th width="5%">方法</th>
+    	<th width="5%">耗时(毫秒)</th>
+        <th width="5%">IP</th>
+        <th width="5%">操作时间</th>
+        <th width="5%">描叙</th>
+        </tr>
+        </thead>
+        
+        <#if page??>
+	      <#list page.elements as syslog>
+        <tbody>
+         <tr>
+         
+         	<td>${syslog.accountName}</td>
+			<td>${syslog.module}</td>
+			<td>${syslog.methods}</td>
+			<td>${syslog.actionTime}</td>
+			<td>${syslog.userIP}</td>
+         	<td>${syslog.operTime}</td>
+         	<td>${syslog.description}</td>
+             <!-- <td>
+              <@hasPermission name="syslog_add">
+              	<a href="javascript:authorize('${syslog.id}','${syslog.accountName}');" onclick="">授权</a> |  
+              </@hasPermission> 
+              
+              <@hasPermission name="syslog_update">
+	          	<a href="javascript:querysyslog('${syslog.id}');" onclick="">编辑</a> |  
+	          </@hasPermission> 
+	          
+	          <@hasPermission name="syslog_delete">
+			  	<a href="javascript:deletesyslog(<#if syslog.id??>${syslog.id}</#if>)">删除</a>
+			  </@hasPermission> 
+	         </td> -->
+         </tr>
+        </tbody>
+        </#list>
+	  	</#if>
+    </table>
+    </div>
+	
+	<script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+	
+	<div class="pagin">
+	    <script language="javascript">
+			document.write(pageStr);
+		</script>
+	</div>
+	</body>
+</html>
+</#escape>

@@ -1,0 +1,170 @@
+<#escape x as (x)!> 
+<#assign base=request.contextPath />
+<html>
+	<head>
+		<base id="base" href="${base}">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>菜单管理</title>
+		<link href="${base}/static/css/style.css" rel="stylesheet" type="text/css">
+		<link href="${base}/static/css/select.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="${base}/static/js/jquery-1.8.2.js"></script>
+		<script type="text/javascript" src="${base}/static/js/pager.js"></script>
+		<script type="text/javascript" src="${base}/static/js/jquery.idTabs.min.js"></script>
+		<script type="text/javascript" src="${base}/static/js/select-ui.min.js"></script> 
+		<script type="text/javascript" src="${base}/static/lib/layer/layer.js"></script>
+		<script language="javascript" type="text/javascript">
+			
+		    var pageStr = createPageBar(${page.pageNumber},${page.pageSize},${page.pageIndex},${page.total}, "javascript:dosearch" ,10);
+			function dosearch(p1, p2) {
+				var frm = document.searchfrm;
+				frm.pageIndex.value = p1;
+				frm.pageSize.value = p2;
+				frm.submit();
+			}
+			
+			function queryResources(id){
+		   		$("#searchfrm").attr("action","${base}/admin/resources/toAdd.do?id="+id);
+		   		$("#searchfrm").submit();
+                 //window.location.href="bonus!setBonus.htm?id="+id;
+		    }
+			
+			//单条记录删除  
+		   function deleteResources(id){
+		   		var url = "${base}/admin/resources/delete.do";
+		   		if(id==""){
+		   			alert("删除记录删除的ID获取失败！");
+		   			return false;
+		   		}
+				if(!confirm("确定是否要删除？")){
+					return false;
+				}
+				var para = "id=" + id;
+	            $.ajax({
+	            	type:"GET",
+	            	url:url,
+	            	data:para,
+	            	dataType:"json",
+	            	success:function(msg){
+	            		if(msg.code == "1000"){
+		            		window.location.reload()
+	            		}else {
+	            			alert("操作失败");
+	            		}
+	            	},
+	            	error:function(msg){
+	            		alert("操作失败");
+	            	}
+	            });
+			}
+		</script>
+		<script type="text/javascript">
+		$(document).ready(function(e) {
+		    $(".select1").uedSelect({
+				width : 200			  
+			});
+		});
+		
+		/* function banks(res_name){
+			layer.open({
+		        type: 2,
+		        title: res_name+'的银行卡',
+		        maxmin: true,
+		        shadeClose: true, //点击遮罩关闭层
+		        area : ['1200px' , '800'],
+		        content: 'resbank!index.htm?res_name='+res_name
+		    });
+		} */
+		
+		</script>
+	</head>
+<body>
+<div class="place">
+		    <span>位置：</span>
+		    <ul class="placeul">
+		    <li><a href="#">菜单管理</a></li>
+		    </ul>
+   	 </div>
+	<br>
+	<div style="margin-left:5px;">
+	  	<form name="searchfrm" id="searchfrm" action="${base}/admin/resources/list.do" method="post">
+		  <div class="searchbar_mid">
+		  <input type="hidden" name="pageIndex" value="${page.pageIndex}">
+     			<input type="hidden" name="pageSize" value="${page.pageSize}">
+     			<ul class="seachform">
+				    <li><label>菜单名称</label><input value="${queryParams.name!''}" name="name" id="name" type="text" class="scinput" /></li>
+				    <li><label>状态</label>
+				     <div class="vocation">
+					   <select name="status" id="status" class="select1">
+					    	<option value="" >全部</option>
+					    	<option value="0" <#if (queryParams.status)?? && queryParams.status=="0">selected="selected"</#if>>禁用</option>
+					    	<option value="1" <#if (queryParams.status)?? && queryParams.status=="1">selected="selected"</#if>>启用</option>
+					    </select>
+					 </div>
+				    </li>
+				    
+				    <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="查询"/></li>
+				</ul> 
+			
+	      </div>
+       </form>
+      <br/> 
+    </div>
+    <@hasPermission name="resources_add">
+	<div class="rightinfo">
+		<div class="tools">
+	    	<ul class="toolbar">
+		        <li class="click"><a href="${base}/admin/resources/toAdd.do"><span><img src="${base}/static/images/t01.png" /></span>添加</a></li>
+	         </ul>
+    	</div>
+    </div>
+    </@hasPermission> 
+    
+	<table class="tablelist">
+    	<thead>
+	    	<tr>
+		    	<th width="5%">菜单名称</th>
+		    	<th width="5%">权限KEY</th>
+		    	<th width="5%">URL地址</th>
+		        <th width="5%">状态</th>
+		        <th width="5%">描述</th>
+		        <th width="5%">操作</th>
+	        </tr>
+        </thead>
+        
+        <#if page??>
+	      <#list page.elements as res>
+        <tbody>
+         <tr>
+         
+         	<td>${res.name}</td>
+			<td>${res.resKey}</td>
+         	<td>${res.resUrl}</td>
+         	<td><#if res.ishide==1>启用<#else>禁用</#if></td>
+         	<td>${res.description}</td>
+             <td>
+             	<@hasPermission name="resources_update">
+	           		<a href="javascript:queryResources('${res.id}');" onclick="">编辑</a> | 
+	           	</@hasPermission> 
+	           <@hasPermission name="resources_delete">
+			   		<a href="javascript:deleteResources(<#if res.id??>${res.id}</#if>)">删除</a>
+			   	</@hasPermission> 
+	         </td>
+         </tr>
+        </tbody>
+        </#list>
+	  	</#if>
+    </table>
+    </div>
+	
+	<script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+	
+	<div class="pagin">
+	    <script language="javascript">
+			document.write(pageStr);
+		</script>
+	</div>
+	</body>
+</html>
+</#escape>

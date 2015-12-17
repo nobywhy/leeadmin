@@ -1,0 +1,177 @@
+<#escape x as (x)!> 
+<#assign base=request.contextPath />
+<html>
+	<head>
+		<base id="base" href="${base}">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>用户管理</title>
+		<link href="${base}/static/css/style.css" rel="stylesheet" type="text/css">
+		<link href="${base}/static/css/select.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="${base}/static/js/jquery-1.8.2.js"></script>
+		<script type="text/javascript" src="${base}/static/js/pager.js"></script>
+		<script type="text/javascript" src="${base}/static/js/jquery.idTabs.min.js"></script>
+		<script type="text/javascript" src="${base}/static/js/select-ui.min.js"></script> 
+		<script type="text/javascript" src="${base}/static/lib/layer/layer.js"></script>
+		<script language="javascript" type="text/javascript">
+			
+		    var pageStr = createPageBar(${page.pageNumber},${page.pageSize},${page.pageIndex},${page.total}, "javascript:dosearch" ,10);
+			function dosearch(p1, p2) {
+				var frm = document.searchfrm;
+				frm.pageIndex.value = p1;
+				frm.pageSize.value = p2;
+				frm.submit();
+			}
+			
+			function queryUser(id){
+		   		$("#searchfrm").attr("action","${base}/admin/user/toAdd.do?id="+id);
+		   		$("#searchfrm").submit();
+                 //window.location.href="bonus!setBonus.htm?id="+id;
+		    }
+			
+			//单条记录删除  
+		   function deleteUser(id){
+		   		var url = "${base}/admin/user/delete.do";
+		   		if(id==""){
+		   			alert("删除记录删除的ID获取失败！");
+		   			return false;
+		   		}
+				if(!confirm("确定是否要删除？")){
+					return false;
+				}
+				var para = "id=" + id;
+	            $.ajax({
+	            	type:"GET",
+	            	url:url,
+	            	data:para,
+	            	dataType:"json",
+	            	success:function(msg){
+	            		if(msg == "success"){
+		            		window.location.reload()
+	            		}else {
+	            			alert("操作失败");
+	            		}
+	            	},
+	            	error:function(msg){
+	            		alert("操作失败");
+	            	}
+	            });
+			}
+			
+		</script>
+		<script type="text/javascript">
+		$(document).ready(function(e) {
+		    $(".select1").uedSelect({
+				width : 200			  
+			});
+		});
+		
+		function authorize(uid,accountName){
+			/* layer.open({
+		        type: 2,
+		        title: '给'+uname+'授权',
+		        maxmin: true,
+		        shadeClose: true, //点击遮罩关闭层
+		        area : ['400' , '800'],
+		        content: '${base}/admin/user/tree.do?uid='+uid
+		    }); */
+		    //window.location.href='${base}/admin/user/authorize.do?uid='+uid
+		   	$("#accountName").val(accountName);
+		   	$("#searchfrm").attr("action",'${base}/admin/user/toAuthorize.do?uid='+uid);
+		   	$("#searchfrm").submit();
+		}
+		
+		</script>
+	</head>
+<body>
+<div class="place">
+		    <span>位置：</span>
+		    <ul class="placeul">
+		    <li><a href="#">用户管理</a></li>
+		    </ul>
+   	 </div>
+	<br>
+	<div style="margin-left:5px;">
+	 <form name="searchfrm" id="searchfrm" action="${base}/admin/user/list.do" method="post">
+		  <div class="searchbar_mid">
+		  <input type="hidden" name="pageIndex" value="${page.pageIndex}">
+     			<input type="hidden" name="pageSize" value="${page.pageSize}">
+     			<ul class="seachform">
+				    
+				    <li><label>姓名</label><input value="${queryParams.userName!''}" name="userName" id="userName" type="text" class="scinput" />
+				    </li>
+				    <li><label>帐号</label><input value="${queryParams.accountName!''}" name="accountName" id="accountName" type="text" class="scinput" /></li>
+				    </li>
+				    <li><label>&nbsp;</label><input name="" type="submit" class="btn" value="查询"/></li>
+				</ul> 
+			
+	      </div>
+       </form>
+      <br/> 
+    </div>
+	
+	<@hasPermission name="user_add">
+	<div class="rightinfo">
+		<div class="tools">
+	    	 <ul class="toolbar">
+		        <li class="click"><a href="${base}/admin/user/toAdd.do"><span><img src="${base}/static/images/t01.png" /></span>添加</a></li>
+	         </ul>
+    	</div>
+    </div>
+    </@hasPermission> 
+    
+	<table class="tablelist">
+    	<thead>
+    	<tr>
+    	
+    	<th width="5%">姓名</th>
+    	<th width="5%">帐号</th>
+    	<th width="5%">描叙</th>
+    	<th width="5%">是否冻结</th>
+    	<th width="5%">创建时间</th>
+        <th width="5%">操作</th>
+        </tr>
+        </thead>
+        
+        <#if page??>
+	      <#list page.elements as user>
+        <tbody>
+         <tr>
+         
+         	<td>${user.userName}</td>
+			<td>${user.accountName}</td>
+			<td>${user.description}</td>
+			<td><#if user.locked==1>是<#else>否</#if></td>
+			<td>${user.createTime}</td>
+         	
+             <td>
+              <@hasPermission name="user_add">
+              	<a href="javascript:authorize('${user.id}','${user.accountName}');" onclick="">授权</a> |  
+              </@hasPermission> 
+              
+              <@hasPermission name="user_update">
+	          	<a href="javascript:queryUser('${user.id}');" onclick="">编辑</a> |  
+	          </@hasPermission> 
+	          
+	          <@hasPermission name="user_delete">
+			  	<a href="javascript:deleteUser(<#if user.id??>${user.id}</#if>)">删除</a>
+			  </@hasPermission> 
+	         </td>
+         </tr>
+        </tbody>
+        </#list>
+	  	</#if>
+    </table>
+    </div>
+	
+	<script type="text/javascript">
+	$('.tablelist tbody tr:odd').addClass('odd');
+	</script>
+	
+	<div class="pagin">
+	    <script language="javascript">
+			document.write(pageStr);
+		</script>
+	</div>
+	</body>
+</html>
+</#escape>

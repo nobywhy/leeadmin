@@ -1,0 +1,125 @@
+<#escape x as (x)!> 
+<#assign base=request.contextPath />
+<html>
+	<head>
+		<base id="base" href="${base}">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>用户管理</title>
+		<link href="${base}/static/css/style.css" rel="stylesheet" type="text/css">
+		<link href="${base}/static/css/select.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="${base}/static/js/jquery-1.8.2.js"></script>
+		<script type="text/javascript" src="${base}/static/js/pager.js"></script>
+		<script type="text/javascript" src="${base}/static/js/jquery.idTabs.min.js"></script>
+		<script type="text/javascript" src="${base}/static/js/select-ui.min.js"></script> 
+		<script type="text/javascript" src="${base}/static/lib/layer/layer.js"></script>
+		<script language="javascript" type="text/javascript">
+			$(document).ready(function(e) {
+			    $(".select1").uedSelect({
+					width : 200			  
+				});
+			});
+			
+			
+			function sub(){
+					var inputs = $(":input[required='required']");
+					// 不需要校验，直接提交
+					if(inputs==null || inputs.length==0){
+						$("#userform").submit(); 
+						return;
+					}
+					// 需要校验
+					var pass = true;
+					inputs.each(function(){
+						if($(this).val()==""){
+							alert($(this).attr("message"));
+							$(this).focus();
+							pass = false;
+							return false;
+						}
+					});
+					if(pass){
+					   $("#userform").submit(); 
+					}
+				}
+				 
+				function goBack(){
+					//var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+					//parent.layer.close(index);
+					$("#backFrm").submit();
+				}
+			
+			/* function banks(user_name){
+				layer.open({
+			        type: 2,
+			        title: user_name+'的银行卡',
+			        maxmin: true,
+			        shadeClose: true, //点击遮罩关闭层
+			        area : ['1200px' , '800'],
+			        content: 'userbank!index.htm?user_name='+user_name
+			    });
+			} */
+		
+		</script>
+	</head>
+<body>
+<body>
+
+	<form id="backFrm" action="${base}/admin/user/list.do" method="post">
+		<#if queryParams??>
+			<#list queryParams?keys as key>
+				<input type="hidden" name="${key}" value="${queryParams[key]}"/>
+			</#list>
+		</#if>
+	</form>
+
+	<div class="place">
+		    <span>位置：</span>
+		    <ul class="placeul">
+		    <li><a href="${base}/admin/user/list.do>用户管理</a></li>
+		    <li><a href="#"><#if user??>编辑用户<#else>添加用户</#if></a></li>
+		    </ul>
+		</div>
+		  
+		 <div class="formbody">
+		    
+		    <div class="formtitle"><span><#if user??>编辑用户<#else>添加用户</#if></span></div>
+		    <form action="${base}/admin/user/add.do" name="userform" id="userform"  method="post">
+        	<input type="hidden" name="id" id="id" value="${user.id}"/>
+		    <ul class="forminfo">
+		    
+		     <li><label>姓名:<b>*</b></label>
+		     	<input id="userName" name="userName" type="text" class="dfinput" value="${user.userName}" required="required" message="请填写姓名"/>
+		     </li>
+		     
+		     <li><label>帐号:<b>*</b></label>
+		     	<input id="type" id="accountName" name="accountName" type="text" required="required" message="请填写帐号"
+		     	  <#if user??>readonly=readonly</#if>  class="dfinput" value="${user.accountName}" />
+		    </li>
+		    
+			 <#if user??>
+			 <#else>
+				 <li><label>密码:<b>*</b></label>
+				 <input id="type" id="password" name="password" type="text"  class="dfinput" value="${user.password}" required="required" message="请填写密码"/>
+				 </li>
+			 </#if>
+			 
+		     <li><label>状态:<b>*</b></label>
+		     	<div class="vocation">
+				   <select name="locked" id="locked" class="select1">
+				    	<option value=0 <#if (user.locked)?? && user.locked==0>selected="selected"</#if>>启用</option>
+				   		<option value=1 <#if (user.locked)?? && user.locked==1>selected="selected"</#if>>禁用</option>
+				    </select>
+				</div>
+		     </li>
+		     <li><label>描叙:</label><input id="type" id="description" name="description" type="text"  class="dfinput" value="${user.description}" /></li>
+		    <li><label>&nbsp;</label>
+		   		<input type="button" class="btn" onclick="sub();" value="提交">
+		   		<input type="button" class="btn" onclick="goBack();"  value="取消">
+			</li>
+		    </ul>
+		    
+		    </form>
+		</div>
+</body>
+</html>
+</#escape>

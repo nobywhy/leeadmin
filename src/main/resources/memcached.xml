@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<memcached>
+        <client name="default" compressEnable="true" memcachedbEnable="false" compressThreshold="2048" primitiveAsString="true"
+                defaultEncoding="UTF-8" socketpool="pool0">                
+        </client>
+        <client name="SessionMem" compressEnable="true" memcachedbEnable="false" compressThreshold="2048" primitiveAsString="true"
+                defaultEncoding="UTF-8" socketpool="pool0">                
+        </client>
+        <socketpool name="pool0" failover="true" initConn="10" minConn="10" aliveCheck="true"
+                maxConn="512" maintSleep="3000" nagle="false" socketTO="5000" maxIdle="300000" >
+              <servers>127.0.0.1:11211</servers>
+            <weights>3</weights>
+             
+        </socketpool>       
+</memcached>

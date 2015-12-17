@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+   <global 
+	os="windows"
+	maxsize="3000000" 
+	maxwidth="725" 
+	maxheight="0"
+	key="singlePic"
+	tmpfilepath="/dev/shm/photos"
+	defaultUserpicHttpUrl="http://localhost:8080/badscorejob/uploadfile/pics/0/000/000/defaultHeadPhoto.jpg"
+	file_suffix_inlcude="jpg,jpeg,bmp,gif,png,mp3,rmvb,rm,avi,mp4,mkv,rar,apk"
+	path_mapping="path1"
+   />
+
+   <webpathmaps> 
+	    <node name="path1" webpath="http://120.24.170.15:82/photos/" diskpath="/data/mnt/images0/photos/" />
+	   <!-- <node name="path1" webpath="http://192.168.6.206:8090/app/photos/" diskpath="D://Program Files//apache-tomcat-app//webapps//app//photos//" /> -->
+   </webpathmaps>
+</root>

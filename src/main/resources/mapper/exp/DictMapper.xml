@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lee.exp.dao.DictDao">
+
+
+	<insert id="create" parameterType="java.util.HashMap">
+		insert into
+		t_dict(dict_key,dict_value,description,sort,remarks,create_by,delete_flag,parent_id)
+		values
+		(#{dict_key},#{dict_value},#{description},#{sort},#{remarks},#{create_by},#{delete_flag},#{parent_id})
+	</insert>
+
+	<update id="update" parameterType="java.util.HashMap">
+		update t_dict
+		<set>
+			<if test="dict_key!=null &amp;&amp; dict_key!=''">
+				dict_key=#{dict_key},
+			</if>
+			<if test="dict_value!=null &amp;&amp; dict_value!=''">
+				dict_value=#{dict_value},
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				description=#{description},
+			</if>
+			<if test="sort!=null &amp;&amp; sort!=''">
+				sort=#{sort},
+			</if>
+			<if test="remarks!=null &amp;&amp; remarks!=''">
+				remarks=#{remarks},
+			</if>
+			<if test="create_by!=null &amp;&amp; create_by!=''">
+				create_by=#{create_by},
+			</if>
+			<if test="create_time!=null &amp;&amp; create_time!=''">
+				create_time=#{create_time},
+			</if>
+			<if test="delete_flag!=null &amp;&amp; delete_flag!=''">
+				delete_flag=#{delete_flag},
+			</if>
+			<if test="parent_id!=null &amp;&amp; parent_id!=''">
+				parent_id=#{parent_id},
+			</if>
+
+		</set>
+		where id=#{id}
+	</update>
+
+	<delete id="delete" parameterType="int">
+		delete from t_dict where
+		id=#{id}
+	</delete>
+
+	<select id="getById" resultType="java.util.HashMap">
+		select * from t_dict where
+		id=#{id}
+	</select>
+
+	<select id="getByConditionCount" parameterType="java.util.HashMap"
+		resultType="int">
+		select count(*) from t_dict
+		<where>
+			<if test="dict_key!=null &amp;&amp; dict_key!=''">
+				and dict_key=#{dict_key}
+			</if>
+			<if test="dict_value!=null &amp;&amp; dict_value!=''">
+				and dict_value=#{dict_value}
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				and description=#{description}
+			</if>
+			<if test="sort!=null &amp;&amp; sort!=''">
+				and sort=#{sort}
+			</if>
+			<if test="remarks!=null &amp;&amp; remarks!=''">
+				and remarks=#{remarks}
+			</if>
+			<if test="create_by!=null &amp;&amp; create_by!=''">
+				and create_by=#{create_by}
+			</if>
+			<if test="create_time!=null &amp;&amp; create_time!=''">
+				and create_time=#{create_time}
+			</if>
+			<if test="delete_flag!=null &amp;&amp; delete_flag!=''">
+				and delete_flag=#{delete_flag}
+			</if>
+			<if test="parent_id!=null &amp;&amp; parent_id!=''">
+				and parent_id=#{parent_id}
+			</if>
+
+		</where>
+	</select>
+
+	<select id="getByConditionPage" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from t_dict
+		<where>
+			<if test="dict_key!=null &amp;&amp; dict_key!=''">
+				and dict_key=#{dict_key}
+			</if>
+			<if test="dict_value!=null &amp;&amp; dict_value!=''">
+				and dict_value=#{dict_value}
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				and description=#{description}
+			</if>
+			<if test="sort!=null &amp;&amp; sort!=''">
+				and sort=#{sort}
+			</if>
+			<if test="remarks!=null &amp;&amp; remarks!=''">
+				and remarks=#{remarks}
+			</if>
+			<if test="create_by!=null &amp;&amp; create_by!=''">
+				and create_by=#{create_by}
+			</if>
+			<if test="create_time!=null &amp;&amp; create_time!=''">
+				and create_time=#{create_time}
+			</if>
+			<if test="delete_flag!=null &amp;&amp; delete_flag!=''">
+				and delete_flag=#{delete_flag}
+			</if>
+			<if test="parent_id!=null &amp;&amp; parent_id!=''">
+				and parent_id=#{parent_id}
+			</if>
+
+		</where>
+		order by id desc
+		limit #{first},#{pageSize}
+	</select>
+
+	<select id="getByCondition" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select * from t_dict
+		<where>
+			<if test="dict_key!=null &amp;&amp; dict_key!=''">
+				and dict_key=#{dict_key}
+			</if>
+			<if test="dict_value!=null &amp;&amp; dict_value!=''">
+				and dict_value=#{dict_value}
+			</if>
+			<if test="description!=null &amp;&amp; description!=''">
+				and description=#{description}
+			</if>
+			<if test="sort!=null &amp;&amp; sort!=''">
+				and sort=#{sort}
+			</if>
+			<if test="remarks!=null &amp;&amp; remarks!=''">
+				and remarks=#{remarks}
+			</if>
+			<if test="create_by!=null &amp;&amp; create_by!=''">
+				and create_by=#{create_by}
+			</if>
+			<if test="create_time!=null &amp;&amp; create_time!=''">
+				and create_time=#{create_time}
+			</if>
+			<if test="delete_flag!=null &amp;&amp; delete_flag!=''">
+				and delete_flag=#{delete_flag}
+			</if>
+			<if test="parent_id!=null &amp;&amp; parent_id!=''">
+				and parent_id=#{parent_id}
+			</if>
+
+		</where>
+		order by id desc
+	</select>
+
+
+</mapper>

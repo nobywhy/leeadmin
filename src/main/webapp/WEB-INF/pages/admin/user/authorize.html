@@ -1,0 +1,90 @@
+<#escape x as (x)!> 
+<#assign base=request.contextPath />
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+	<base id="base" href="${base}">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>菜单管理</title>
+		<link href="${base}/static/lib/ztree/css/demo.css" rel="stylesheet" type="text/css" />
+		<link href="${base}/static/lib/ztree/css/zTreeStyle/zTreeStyle.css" rel="stylesheet"  type="text/css">
+		
+		<script type="text/javascript" src="${base}/static/js/jquery-1.8.2.js"></script>
+		<script type="text/javascript" src="${base}/static/lib/layer/layer.js"></script>
+		<script type="text/javascript" src="${base}/static/lib/ztree/js/jquery.ztree.all-3.5.min.js"></script>
+	<SCRIPT type="text/javascript">
+		var setting = {
+			check: {
+				enable: true
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			}
+		};
+
+		/* var zNodes = [
+			{ id:1, pId:0, name:"随意勾选 1", open:true},
+			{ id:11, pId:1, name:"随意勾选 1-1", open:true},
+			{ id:111, pId:11, name:"随意勾选 1-1-1"},
+			{ id:112, pId:11, name:"随意勾选 1-1-2"},
+			{ id:12, pId:1, name:"随意勾选 1-2", open:true},
+			{ id:121, pId:12, name:"随意勾选 1-2-1"},
+			{ id:122, pId:12, name:"随意勾选 1-2-2"},
+			{ id:2, pId:0, name:"随意勾选 2", checked:true, open:true},
+			{ id:21, pId:2, name:"随意勾选 2-1"},
+			{ id:22, pId:2, name:"随意勾选 2-2", open:true},
+			{ id:221, pId:22, name:"随意勾选 2-2-1", checked:true},
+			{ id:222, pId:22, name:"随意勾选 2-2-2"},
+			{ id:23, pId:2, name:"随意勾选 2-3"}
+		]; */
+		var zNodes = ${zNode};
+		
+		$(document).ready(function(){
+			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+		});
+		
+		
+		function sub(){
+			
+			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			var nodes = treeObj.getCheckedNodes(true);
+			
+			if(nodes==null || nodes.length==0){
+				alert("请选择菜单");
+				return;
+			}
+			
+			var ids = "";
+			$.each(nodes,function(i,n){
+				ids+=n.id+",";
+			});
+			
+			$("#ids").val(ids);
+			$("#authorizeForm").submit();
+			
+		}
+		
+	</SCRIPT>
+</HEAD>
+
+<BODY>
+<div class="content_wrap" style="margin-left: 50px;">
+	<h2>给用户  ${accountName} 授予权限</h2>
+	<div class="zTreeDemoBackground left">
+		 <ul id="treeDemo" class="ztree"></ul>
+		 
+		 <form id="authorizeForm" action="${base}/admin/user/authorize.do" method="post">
+		 	<input type="hidden" name="uid" id="uid" value="${uid}"/>
+		 	<input type="hidden" name="ids" id="ids" value=""/>
+			 <input type="button" class="btn" onclick="sub();" value="授权">
+			 <input type="button" class="btn" onclick="javascript:window.history.back();"  value="取消">
+		 </form>
+		 
+		 
+	</div>
+</div>
+</BODY>
+</HTML>
+</#escape>
